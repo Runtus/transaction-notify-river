@@ -5,7 +5,6 @@ import { BASE_URL, DEFAULT_HEADERS } from './const'
 import account from '../config.json'
 
 
-
 export const getHash = () => {
     const timeString = new Date().getTime().toString();
     const AUTH_KEY = "appbyme_key";

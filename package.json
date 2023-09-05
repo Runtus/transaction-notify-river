@@ -2,6 +2,7 @@
     "name": "vite-ts-node",
     "version": "1.0.0",
     "main": "index.ts",
+    "type": "module",
     "license": "MIT",
     "scripts": {
         "dev": "vite",
