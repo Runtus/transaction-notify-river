@@ -3,6 +3,7 @@ import { login } from './authen'
 import { promisePoller } from './tools'
 import Config from '../config.json'
 import { getRiverForumList } from './transaction'
+import { sendNotify } from './notify'
 
 
 
@@ -16,14 +17,35 @@ async function exec() {
                 const { token, secret } = tokens.data;
                 const posts = await getTranscationPost(token, secret);
 
-                // 查找post中是否有关键字
+                const storage: Array<{ nickname: string, title: string, subject: string }> = []
+                // 所有帖子轮询一遍后，总结再发送，一次发送一个邮件即可。
                 posts.data.list.forEach(item => {
-                    Config.PushNotifyConfig.keywords.forEach(key => {
-                        if (item.title.includes(key) || item.subject.includes(key)) {
-                            
+                    for (const keyword of Config.pushNotifyConfig.keywords) {
+                        if (item.title.includes(keyword) || item.subject.includes(keyword)) {
+                            storage.push({
+                                nickname: item.user_nick_name,
+                                title: item.title,
+                                subject: item.subject
+                            })
+                            break;
                         }
-                    })
+                    }
                 })
+
+                if (storage.length !== 0) {
+                    const html = storage.reduce((pre, cur) => {
+                        const html = `<h3> ${cur.title} </h3>
+                                      <p> ${cur.subject} </p>
+                        `
+                        return `${pre} \n ${html}`
+                    }, "")
+                    
+                    await sendNotify(html, `关键字: ${Config.pushNotifyConfig.keywords.join(",")}`)
+                } else {
+                    console.log("本次查询并没有关键字相关的二手产品。")
+                }
+
+                
             },
             Config.interval
         )
@@ -35,4 +57,6 @@ async function exec() {
 }
 
 
-exec()
+exec().catch(err => {
+    console.error(err);
+})
