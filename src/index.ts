@@ -3,7 +3,7 @@ import { login } from './authen'
 import { promisePoller } from './tools'
 import Config from '../config.json'
 import { getRiverForumList } from './transaction'
-import { sendNotify } from './notify'
+import { sendNotify, isNewTopic } from './notify'
 
 
 
@@ -21,7 +21,7 @@ async function exec() {
                 // 所有帖子轮询一遍后，总结再发送，一次发送一个邮件即可。
                 posts.data.list.forEach(item => {
                     for (const keyword of Config.pushNotifyConfig.keywords) {
-                        if (item.title.includes(keyword) || item.subject.includes(keyword)) {
+                        if ((item.title.includes(keyword) || item.subject.includes(keyword)) && isNewTopic(item.topic_id, item.replies)) {
                             storage.push({
                                 nickname: item.user_nick_name,
                                 title: item.title,
@@ -41,6 +41,7 @@ async function exec() {
                     }, "")
                     
                     await sendNotify(html, `关键字: ${Config.pushNotifyConfig.keywords.join(",")}`)
+                    console.log("有关注的二手产品，邮件已发送");
                 } else {
                     console.log("本次查询并没有关键字相关的二手产品。")
                 }

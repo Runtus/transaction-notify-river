@@ -7,11 +7,13 @@
     "scripts": {
         "start": "vite-node ./src/index.ts",
         "test": "vitest",
-        "build": "vite build"
+        "build": "vite build",
+        "process": "pm2 start 'yarn vite-node ./src/index.ts' --name 'trans-notify'"
     },
     "dependencies": {
         "@types/nodemailer": "^6.4.9",
         "axios": "^1.5.0",
+        "https-proxy-agent": "^7.0.2",
         "nodemailer": "^6.9.4"
     },
     "devDependencies": {

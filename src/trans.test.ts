@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest'
 import { getTransList, getRiverForumList } from './transaction'
 import { login } from './authen'
 
-// 二手专区: board_id 24
+// 二手专区: board_id 61
 
 describe("getForum", async () => {
     console.log(114)
