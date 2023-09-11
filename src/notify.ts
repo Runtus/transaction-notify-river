@@ -36,6 +36,7 @@ export const isNewTopic = (cacheId: string, replys: number) => {
         return false;
     } else {
     // 不是全新topic，但是有新回复，需要发送邮件
+        topicMap.set(cacheId, replys); // 更新replys，否则会重复发送
         return true;
     }
 }
